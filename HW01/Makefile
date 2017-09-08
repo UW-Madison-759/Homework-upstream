@@ -35,4 +35,4 @@ all : Makefile $(EXEC)
 
 .PHONY: clean
 clean:
-	@ rm -f $(EXEC) $(OBJS)
+	@ rm -f *.o *.exe
