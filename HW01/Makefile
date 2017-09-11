@@ -34,6 +34,8 @@ all : Makefile $(EXEC)
 	$(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(ARCH) $(CXXFLAGS) -c $< -o $@
 
 # Here is an example of how to create a target to produce an executable
+# from a source file called 'problem1.cpp'. If you are using C, then
+# you will need to change $(CXX) to $(CC).
 problem1.exe :  problem1.o
     @ echo Building $@...
     @ $(CXX) -o $@ $< $(LDFLAGS)
