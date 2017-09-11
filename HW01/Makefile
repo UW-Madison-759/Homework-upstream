@@ -33,7 +33,11 @@ all : Makefile $(EXEC)
 	@ echo Compiling $<...
 	$(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(ARCH) $(CXXFLAGS) -c $< -o $@
 
-# TODO: add targets for building executables
+# Here is an example of how to create a target to produce an executable
+problem1.exe :  problem1.o
+	problem1.exe: problem1.o
+    @ echo Building $@...
+    @ $(CXX) -o $@ $< $(LDFLAGS)
 
 .PHONY: clean
 clean:
