@@ -35,7 +35,6 @@ all : Makefile $(EXEC)
 
 # Here is an example of how to create a target to produce an executable
 problem1.exe :  problem1.o
-	problem1.exe: problem1.o
     @ echo Building $@...
     @ $(CXX) -o $@ $< $(LDFLAGS)
 
