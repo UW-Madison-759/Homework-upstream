@@ -12,6 +12,9 @@ CXXSTD	:= -std=c++11
 LDOPT 	:= $(OPT)
 LDFLAGS := 
 
+# Names of executables to create
+EXEC	:= problem1.exe problem2.exe
+
 .DEFAULT_GOAL := all
 
 .PHONY: debug
