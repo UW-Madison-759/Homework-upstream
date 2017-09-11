@@ -3,7 +3,6 @@ WFLAGS	:= -Wall -Wextra -Wsign-conversion -Wsign-compare
 
 # Optimization and architecture
 OPT		:= -O3
-ARCH   	:= -march=native
 
 # Language standard
 CCSTD	:= -std=c99
