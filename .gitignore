@@ -2,3 +2,7 @@
 .settings
 .cproject
 .project
+
+# object files
+*.o
+*.exe
