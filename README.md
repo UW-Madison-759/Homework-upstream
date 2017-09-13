@@ -6,8 +6,8 @@ Below there are a couple of instructions that should help you bring info from th
 		
 	* Move your Makefile out of the way (into MakefileOld, for instance) and bring in a fresh copy
 		```
-		>> mv Makefile MakefileOld
-		>> git checkout -- Makefile 
+		mv Makefile MakefileOld
+		git checkout -- Makefile 
 		```
 	* Create a shortcut name for Tim’s remote repo. We’ll call it here upstream:
 		```
