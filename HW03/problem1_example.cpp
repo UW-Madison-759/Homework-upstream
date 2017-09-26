@@ -2,6 +2,7 @@
 #include <list>
 #include <algorithm>
 #include <iomanip>
+#include <iostream>
 #include "stopwatch.hpp"
 
 /*
