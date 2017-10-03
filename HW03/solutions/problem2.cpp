@@ -19,6 +19,10 @@ struct point3D_ca {
 	char c[52];
 };
 
+/*
+ * Use a template function to handle the three different
+ * versions of the point3D struct.
+ */
 template <typename T, typename UnaryFunc>
 void time_it(size_t size, UnaryFunc min_time) {
 	stopwatch<std::milli, float> sw;
@@ -33,6 +37,12 @@ void time_it(size_t size, UnaryFunc min_time) {
 int main() {
 	std::ofstream fout{"problem2.out"};
 
+	/*
+	 * A lambda to store the minimum time in the output file.
+	 * 'array_view<T>' is defined in 'stopwatch.hpp'. It is
+	 * just a simple array-like container that holds the
+	 * timing values returned by the stopwatch::time_it function.
+	 */
 	auto min_time = [&fout](array_view<float> const& x) {
 		fout << *std::min_element(x.begin(), x.end()) << '\n';
 	};
