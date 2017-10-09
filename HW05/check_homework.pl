@@ -34,10 +34,10 @@ if (!&try_build($dir, "problem2")) {
 	print "problem2 not found";
 }
 
-if (!-f "$dir/problem2.pdf") {
-	print "Problem 2 FAILED: problem2.pdf not found";
+if (!-f "$dir/problem2a.pdf") {
+	print "Problem 2 FAILED: problem2a.pdf not found";
 } else {
-	print "found problem2.pdf, Problem 2 PASSED";
+	print "found problem2a.pdf, Problem 2 PASSED";
 }
 
 if (!-f "$dir/problem2b.pdf") {
