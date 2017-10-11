@@ -14,6 +14,10 @@
  *
  */
 
+double f(double x) {
+	return std::exp(std::sin(x)) * std::cos(x / 40.0);
+}
+
 __m256d f(__m256d x) {
 	auto div = _mm256_div_pd(x, _mm256_set1_pd(40.0));
 	auto s = gromacs::sin(x);
@@ -42,9 +46,9 @@ int main(int argc, char *argv[]) {
 	const auto num_threads = std::atoi(argv[1]);
 	omp_set_num_threads(num_threads);
 
-	constexpr int N = 1'000'000;
-	constexpr double n = double { N }, h = 1e-4;
-	constexpr size_t num_iters = 10;
+	constexpr auto N = 1000000UL;
+	constexpr auto h = 100.0 / N;
+	constexpr auto num_iters = 1UL;
 
 	std::vector<float> timings;
 	timings.reserve(num_iters);
@@ -53,6 +57,7 @@ int main(int argc, char *argv[]) {
 
 	__m256d sum = _mm256_setzero_pd();
 	double integral_value { };
+	constexpr auto vec_width = sizeof(__m256d) / sizeof(double);
 
 	// Do it a few times to get rid of timing jitter
 	for (size_t m = 0; m < num_iters; ++m) {
@@ -69,7 +74,7 @@ int main(int argc, char *argv[]) {
 
 		// Do the same again for the "trailing" four terms in Simpson's rule
 		coeffs = _mm256_set_pd(49.0, 43.0, 59.0, 17.0);
-		auto tmp = _mm256_sub_pd(_mm256_set1_pd(n), _mm256_set_pd(3.0, 2.0, 1.0, 0.0));
+		const auto tmp = _mm256_sub_pd(_mm256_set1_pd(static_cast<double>(N)), _mm256_set_pd(3.0, 2.0, 1.0, 0.0));
 		x = _mm256_mul_pd(tmp, _mm256_set1_pd(h));
 		const auto right = _mm256_mul_pd(coeffs, f(x));
 
@@ -94,20 +99,33 @@ int main(int argc, char *argv[]) {
 		 */
 		#pragma omp declare reduction(mm256d_sum : __m256d : omp_out = _mm256_add_pd(omp_out,omp_in)) initializer(omp_priv = _mm256_setzero_pd())
 
-		/*
-		 * 	Here is the main work loop that actually calculates the integral.
-		 * 	Note that the index variable 'i' is incremented by 4 because sizeof(__mm256) == 4 * sizeof(double).
-		 */
-		#pragma omp parallel for schedule(static) reduction(mm256d_sum : sum)
-		for (int i = 4; i <= (N - 4); i += 4) {
+		// How many vector elements are processed by each iteration?
+		// This is needed for doing loop unrolling correctly
+		constexpr auto vec_inc = 1;
+
+		// How many iterations do we need to cover the half-open interval [4, N - 4)?
+		constexpr auto num_iters = (N - 4 - 4) / (vec_inc * vec_width);
+
+		// Here is the main work loop that actually calculates the integral.
+		#pragma omp parallel for reduction(mm256d_sum : sum)
+		for (auto i = 4UL; i <= num_iters * vec_inc * vec_width; i += vec_inc * vec_width) {
 			const auto fi = _mm256_cvtepi32_pd(_mm_set1_epi32(i));
 			const auto t = _mm256_add_pd(fi, fi_offset);
 			const auto indices = _mm256_mul_pd(_mm256_set1_pd(h), t);
-			const auto x = f(indices);
-			sum = _mm256_add_pd(sum, x);
+			const auto y = f(indices);
+			sum = _mm256_add_pd(sum, y);
 		}
 
-		integral_value = h / 48.0 * (horizontal_sum(left) + horizontal_sum(right)) + horizontal_sum(_mm256_mul_pd(_mm256_set1_pd(h), sum));
+		/*
+		 * 	Now we do a scalar (i.e., not vectorized) sum of the terms
+		 * 	that were not covered by the vectors
+		 */
+		double extra_sum {};
+		for (auto i = num_iters * vec_inc * vec_width + 4; i <= N - 4; i++) {
+			extra_sum += f(h * i);
+		}
+
+		integral_value = h / 48.0 * (horizontal_sum(left) + horizontal_sum(right)) + horizontal_sum(_mm256_mul_pd(_mm256_set1_pd(h), sum)) + extra_sum * h;
 
 		sw.stop();
 		timings.push_back(sw.count());
@@ -119,6 +137,6 @@ int main(int argc, char *argv[]) {
 	// Calculate the percent error
 	auto perror = [](auto x) {return 100.0 * std::fabs(x-32.121040688226245) / 32.121040688226245;};
 
-	// For debuggin only. Don't include this in your final results
+	// For debugging only. Don't include this in your final results
 	std::cout << "% error = " << perror(integral_value) << '\n';
 }
