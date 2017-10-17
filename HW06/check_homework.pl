@@ -68,7 +68,7 @@ if (!&detect_build_system($dir)) {
 	print "No build system found";
 }
 
-my $problem1_solution = 1.0;
+my $problem1_solution = 15.1672;
 my @problem2_solution = (0..7, 1..8);
 
 sub problem1($$$) {
@@ -85,7 +85,7 @@ sub problem1($$$) {
 			if (list_any {!looks_like_number $_;} @res) {
 				print "Problem 1$suffix with N=$N FAILED. Expected 3 numeric results, got '@res' +2";
 			} else {
-				if ($res[0] != $problem1_solution) {
+				if (abs($res[0] - $problem1_solution) > 0.05) {
 					print "Problem 1$suffix with N=$N FAILED. Got '$res[0]', expected '$problem1_solution' +3";
 				} else {
 					print "Problem 1$suffix with N=$N PASSED +4";
