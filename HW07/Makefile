@@ -28,7 +28,7 @@ all : problem1 problem2
 problem1: problem1_skeleton.cu
 	module load cuda;nvcc -o problem1 $(OPT) problem1_skeleton.cu -ccbin $(BIN)
 problem2: 
-	module load cuda;nvcc -o problem2  matrixadd.cu matrixadd_gold.cpp -ccbin $(BIN)
+	module load cuda;nvcc -o problem2 $(OPT) matrixadd.cu matrixadd_gold.cpp -ccbin $(BIN)
 
 
 
