@@ -109,8 +109,8 @@ sub problem3($$$) {
 			if (list_any {!looks_like_number $_;} @res) {
 				print "Problem 3 FAILED. Expected 5 numeric results, got '@res' +2";
 			} else {
-				if ($res[4] != $solution) {
-					print "Problem 3 FAILED. Got '$res[3]', expected $solution +3";
+				if (abs($res[4] - $solution) > 0.05) {
+					print "Problem 3 FAILED. Got '$res[4]', expected $solution +3";
 				} else {
 					print "Problem 3 PASSED +4";
 				}
@@ -178,4 +178,10 @@ if (!try_build($dir, "problem3")) {
 } else {
 	print "problem3 built successfully +1";
 	problem3($dir, [1024, 128], 0.53);
+}
+
+if (!-f "$dir/problem3.pdf") {
+	print "Problem 3 FAILED: problem3.pdf not found";
+} else {
+	print "found problem3.pdf, Problem 3 PASSED +1";
 }
