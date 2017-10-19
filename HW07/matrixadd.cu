@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
 	bool res = CompareResults(reference.elements, P.elements, 
 			size_elements, 0.0001f,&norm);
 	if(res==0)printf("Test failed\n"); // This should not be printed in the correct implementation
-	printf("%f\n%f\n%f\n%f\n",norm,msecTotal,inclusiveTime, exclusiveTime);	
+	printf("%f\n%f\n%f\n%f\n",sqrt(norm),msecTotal,inclusiveTime, exclusiveTime);	
 
 
 	// Free host matrices

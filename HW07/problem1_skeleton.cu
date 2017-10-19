@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
 	int Error=0;
 
 	for(int i=0;i<colWidth;i++)
-		Error+=sqrt((hC[i]-refC[i])*(hC[i]-refC[i]));
-	printf("%d\n%d",Error,hC[colWidth-1]);
+		Error+=(hC[i]-refC[i])*(hC[i]-refC[i]);
+	printf("%d\n%d",sqrt(Error),hC[colWidth-1]);
 
 	free(refC);
 	free(hB);
