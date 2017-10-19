@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	// TODO call your kernel
 
 	// TODO copyback results
-	int Error=0;
+	float Error=0;
 
 	for(int i=0;i<colWidth;i++)
 		Error+=(hC[i]-refC[i])*(hC[i]-refC[i]);
