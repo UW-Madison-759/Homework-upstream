@@ -97,12 +97,12 @@ sub problem2($$$) {
 	} else {
 		$$grade++;
 		my @res = clean_output($out);
-		if (@res != 5) {
-			print "Problem 2 with u=$u FAILED. Expected 5 outputs, got '@res' +1";
+		if (@res != 4) {
+			print "Problem 2 with u=$u FAILED. Expected 4 outputs, got '@res' +1";
 		} else {
 			$$grade++;
 			if (list_any {!looks_like_number $_;} @res) {
-				print "Problem 2 with u=$u FAILED. Expected 5 numeric results, got '@res' +2";
+				print "Problem 2 with u=$u FAILED. Expected 4 numeric results, got '@res' +2";
 			} else {
 				$$grade++;
 				if ($res[0] > 0.1) {
