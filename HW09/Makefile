@@ -12,7 +12,7 @@ CXXSTD	:= -std=c++11
 # Linker options
 LDOPT 	:= $(OPT)
 LDFLAGS := 
-
+BIN = "/usr/local/gcc/6.4.0/bin/gcc"
 .DEFAULT_GOAL := all
 
 .PHONY: debug
@@ -21,18 +21,23 @@ debug : LDFLAGS := -fsanitize=address
 debug : ARCH :=
 debug : $(EXEC)
 
-all : Makefile $(EXEC)
+all : problem1A problem1B problem2A problem2B
 
-%.o : %.c Makefile
-	@ echo Compiling $<...
-	$(CC) $(CCSTD) $(WFLAGS) $(OPT) $(ARCH) $(CFLAGS) -c $< -o $@
 
-%.o : %.cpp Makefile
-	@ echo Compiling $<...
-	$(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(ARCH) $(CXXFLAGS) -c $< -o $@
+
+problem1A: problem1a.cu 
+	module load cuda;nvcc -o problem1A $(OPT) problem1a.cu -ccbin $(BIN)
+problem1B: problem1b.cu
+	module load cuda;nvcc -o problem1B $(OPT) problem1b.cu -ccbin $(BIN)
+problem2A: problem2a.cu 2Dconvolution.h
+	module load cuda;nvcc -o problem2A $(OPT) problem2a.cu 2Dconvolution_gold.cpp -ccbin $(BIN)
+problem2B: problem2b.cu 2Dconvolution.h
+	module load cuda;nvcc -o problem2B $(OPT) problem2b.cu 2Dconvolution_gold.cpp -ccbin $(BIN)
+
+
 
 # TODO: add targets for building executables
 
 .PHONY: clean
 clean:
-	@ rm -f $(EXEC) $(OBJS)
+	rm -f problem1A problem1B problem2A problem2B
