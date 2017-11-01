@@ -54,7 +54,7 @@ extern "C"
 void computeGold(float*, const float*, const float*, unsigned int, unsigned int);
 
 Matrix AllocateDeviceMatrix(const Matrix M);
-Matrix AllocateMatrix(int height, int width);
+Matrix AllocateMatrix(int height, int width,int init);
 void CopyToDeviceMatrix(Matrix Mdevice, const Matrix Mhost);
 void CopyFromDeviceMatrix(Matrix Mhost, const Matrix Mdevice);
 bool CompareResults(float* A, float* B, int elements, float eps);
@@ -92,16 +92,16 @@ int main(int argc, char** argv) {
 	}
 
 	int size = atoi(argv[1]);
-	M  = AllocateMatrix(KERNEL_SIZE, KERNEL_SIZE);
-	N  = AllocateMatrix(size, size);		
-	P  = AllocateMatrix(size, size);
+	M  = AllocateMatrix(KERNEL_SIZE, KERNEL_SIZE,1);
+	N  = AllocateMatrix(size, size,1);		
+	P  = AllocateMatrix(size, size,0);
 	float cpuTime = 0.f,gpuTime=0.f;
 
 	// M * N on the device
 	ConvolutionOnDevice(M, N, P);
 
 	// compute the matrix multiplication on the CPU for comparison
-	Matrix reference = AllocateMatrix(P.height, P.width);
+	Matrix reference = AllocateMatrix(P.height, P.width,0);
 	computeGold(reference.elements, M.elements, N.elements, N.height, N.width);
 
 	// in this case check if the result is equivalent to the expected soluion
@@ -158,7 +158,7 @@ Matrix AllocateDeviceMatrix(const Matrix M)
 	return Mdevice;
 }
 
-Matrix AllocateMatrix(int height, int width)
+Matrix AllocateMatrix(int height, int width,int init) // 1 is file read/ 0 is just allocation
 {
 	Matrix M;
 	M.width = M.pitch = width;
@@ -170,10 +170,12 @@ Matrix AllocateMatrix(int height, int width)
 	// don't allocate memory on option 2
 
 	M.elements = (float*) malloc(size*sizeof(float));
-
-	for(unsigned int i = 0; i < M.height * M.width; i++)
+	if(init)
 	{
-		fscanf(fp,"%f",&M.elements[i]);
+		for(unsigned int i = 0; i < M.height * M.width; i++)
+		{
+			fscanf(fp,"%f",&M.elements[i]);
+		}
 	}
 	return M;
 }	
