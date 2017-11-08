@@ -12,7 +12,7 @@ CXXSTD	:= -std=c++11
 # Linker options
 LDOPT 	:= $(OPT)
 LDFLAGS := 
-
+BIN = "/usr/local/gcc/6.4.0/bin/gcc"
 .DEFAULT_GOAL := all
 
 .PHONY: debug
@@ -21,18 +21,17 @@ debug : LDFLAGS := -fsanitize=address
 debug : ARCH :=
 debug : $(EXEC)
 
-all : Makefile $(EXEC)
+all : problem1
 
-%.o : %.c Makefile
-	@ echo Compiling $<...
-	$(CC) $(CCSTD) $(WFLAGS) $(OPT) $(ARCH) $(CFLAGS) -c $< -o $@
 
-%.o : %.cpp Makefile
-	@ echo Compiling $<...
-	$(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(ARCH) $(CXXFLAGS) -c $< -o $@
+
+problem1: problem1.cu 
+	module load cuda;nvcc -o problem1 $(OPT) problem1.cu -ccbin $(BIN)
+
+
 
 # TODO: add targets for building executables
 
 .PHONY: clean
 clean:
-	@ rm -f $(EXEC) $(OBJS)
+	rm -f problem1 problem2 problem3
