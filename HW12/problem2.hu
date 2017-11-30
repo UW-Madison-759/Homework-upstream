@@ -1,0 +1,1 @@
+void prefix_scan(float*, float*, int);
